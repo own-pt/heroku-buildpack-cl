@@ -1,11 +1,19 @@
 (in-package :cl-user)
 
-(defvar *build-dir* (pathname-directory (pathname (concatenate 'string (getenv "BUILD_DIR") "/"))))
-(defvar *cache-dir* (pathname-directory (pathname (concatenate 'string (getenv "CACHE_DIR") "/"))))
-(defvar *buildpack-dir* (pathname-directory (pathname (concatenate 'string (getenv "BUILDPACK_DIR") "/"))))
+(defun hgetenv (target)
+  #+ccl (getenv target)
+  #+sbcl (sb-posix:getenv target))
+
+(defun hsetenv ()
+  #+ccl (ccl:setenv "XDG_CACHE_HOME" (concatenate 'string (hgetenv "CACHE_DIR") "/.asdf/")))
+
+(defvar *build-dir* (pathname-directory (pathname (concatenate 'string (hgetenv "BUILD_DIR") "/"))))
+(defvar *cache-dir* (pathname-directory (pathname (concatenate 'string (hgetenv "CACHE_DIR") "/"))))
+(defvar *buildpack-dir* (pathname-directory (pathname (concatenate 'string (hgetenv "BUILDPACK_DIR") "/"))))
 
 ;;; Tell ASDF to store binaries in the cache dir
-(ccl:setenv "XDG_CACHE_HOME" (concatenate 'string (getenv "CACHE_DIR") "/.asdf/"))
+(hsetenv)
+;;(ccl:setenv "XDG_CACHE_HOME" (concatenate 'string (hgetenv "CACHE_DIR") "/.asdf/"))
 
 (require :asdf)
 
@@ -17,28 +25,39 @@
 	(funcall (symbol-function (find-symbol "INSTALL" (find-package "QUICKLISP-QUICKSTART")))
 		 :path (make-pathname :directory (pathname-directory ql-setup))))))
 
-(asdf:clear-system "acl-compat")
+;(asdf:clear-system "acl-compat")
 
-(load (make-pathname :directory (append *cache-dir* '("repos" "portableaserve" "acl-compat"))
-		     :defaults "acl-compat.asd"))
-(load (make-pathname :directory (append *cache-dir* '("repos" "portableaserve" "aserve"))
-		     :defaults "aserve.asd"))
+;(load (make-pathname :directory (append *cache-dir* '("repos" "portableaserve" "acl-compat"))
+;		     :defaults "acl-compat.asd"))
+;(load (make-pathname :directory (append *cache-dir* '("repos" "portableaserve" "aserve"))
+;		     :defaults "aserve.asd"))
 
-;;; Default toplevel, app can redefine if necessary
+(ql:quickload "hunchentoot")
+
 (defun heroku-toplevel ()
-  (let ((port (parse-integer (getenv "PORT"))))
+  (let ((port (parse-integer (hgetenv "PORT"))))
     (format t "Listening on port ~A~%" port)
-    (funcall (symbol-function (find-symbol "START" (find-package "NET.ASERVE")))
-	     :port port)
-    (loop (sleep 60))			;sleep forever
-    ))
+    (hunchentoot:start (make-instance 'hunchentoot:easy-acceptor :port port))))
+;;; Default toplevel, app can redefine if necessary
+;(defun heroku-toplevel ()
+;  (let ((port (parse-integer (hgetenv "PORT"))))
+;    (format t "Listening on port ~A~%" port)
+;    (funcall (symbol-function (find-symbol "START" (find-package "NET.ASERVE")))
+;	     :port port)
+;    (loop (sleep 60))			;sleep forever
+;    ))
 
 ;;; This loads the application
 (load (make-pathname :directory *build-dir* :defaults "heroku-setup.lisp"))
 
-(let ((app-file (format nil "~A/lispapp" (getenv "BUILD_DIR")))) ;must match path specified in bin/release
+(defun h-save-app (app-file)
+  #+ccl (save-application app-file
+        :prepend-kernel t
+        :toplevel-function #'heroku-toplevel)
+  #+sbcl (sb-ext:save-lisp-and-die app-file
+        :toplevel #'heroku-toplevel
+        :executable t))
+
+(let ((app-file (format nil "~A/lispapp" (hgetenv "BUILD_DIR")))) ;must match path specified in bin/release
   (format t "Saving to ~A~%" app-file)
-  (save-application app-file
-		    :prepend-kernel t
-		    :toplevel-function #'heroku-toplevel
-		    ))
+  (h-save-app app-file))
