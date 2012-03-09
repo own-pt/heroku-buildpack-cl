@@ -18,8 +18,8 @@ function indent() {
 
 #S3_BUCKET="cl-heroku"
 #CCL_PACKAGE="http://${S3_BUCKET}.s3.amazonaws.com/ccl-1.7.tgz"
-CL_PACKAGE="http://dl.dropbox.com/u/28383763/sbcl-1.0.55-x86-darwin-binary.tar.bz2"
-
+#CL_PACKAGE="http://dl.dropbox.com/u/28383763/sbcl-1.0.55-x86-darwin-binary.tar.bz2"
+CL_PACKAGE="http://dl.dropbox.com/u/28383763/sbcl-1.0.55-x86-linux-binary.tar.bz2"
 
 # parse and derive params
 BUILDPACK_DIR=$(cd $(dirname $0); cd ..; pwd) # absolute path of buildpack
