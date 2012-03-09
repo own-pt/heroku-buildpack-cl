@@ -5,7 +5,8 @@
   #+sbcl (sb-posix:getenv target))
 
 (defun hsetenv ()
-  #+ccl (ccl:setenv "XDG_CACHE_HOME" (concatenate 'string (hgetenv "CACHE_DIR") "/.asdf/")))
+  #+ccl (ccl:setenv "XDG_CACHE_HOME" (concatenate 'string (hgetenv "CACHE_DIR") "/.asdf/"))
+  #+sbcl (sb-posix:putenv (format nil "XDG_CACHE_HOME=~A" (concatenate 'string (hgetenv "CACHE_DIR") "/.asdf/"))))
 
 (defvar *build-dir* (pathname-directory (pathname (concatenate 'string (hgetenv "BUILD_DIR") "/"))))
 (defvar *cache-dir* (pathname-directory (pathname (concatenate 'string (hgetenv "CACHE_DIR") "/"))))
