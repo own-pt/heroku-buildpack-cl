@@ -30,7 +30,7 @@ echo "-----> compile params: $BUILD_DIR $CACHE_DIR"
 echo "-----> Installing sbcl"
 if [ ! -d $CL_DIR ]; then
     echo "-----> Fetching sbcl"
-    mkdir -p $CL_DIR  && curl $CL_PACKAGE -s -o -  | tar xzf - -C $CL_DIR
+    mkdir -p $CL_DIR  && curl $CL_PACKAGE -s -o -  | tar xjf - -C $CL_DIR
 fi
 
 # add to slug 
