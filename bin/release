@@ -9,6 +9,7 @@ addons:
 config_vars:
   PATH: /usr/bin:/bin
   CL_DEFAULT_DIRECTORY: sbcl/sbcl-1.0.55-x86-linux
+  LANG: en_US.UTF-8
 default_process_types:
   web: ./lispapp
 EOF
