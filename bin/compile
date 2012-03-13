@@ -15,30 +15,41 @@ function indent() {
   esac
 }
 
-S3_BUCKET="sbcl-heroku"
-CL_PACKAGE="http://${S3_BUCKET}.s3.amazonaws.com/sbcl-1.0.54-x86-64-linux-binary.tar.bz2"
-
 # parse and derive params
 BUILDPACK_DIR=$(cd $(dirname $0); cd ..; pwd) # absolute path of buildpack
 BUILD_DIR=$1
 CACHE_DIR=$2
 
-CL_DIR="$CACHE_DIR/sbcl"
-
+CL_DIR="$CACHE_DIR/$CL_IMPL"
 echo "-----> compile params: $BUILD_DIR $CACHE_DIR"
 
-echo "-----> Installing sbcl"
+# 
+case $CL_IMPL in
+  sbcl)
+    S3_BUCKET="sbcl-heroku"
+    CL_PACKAGE="http://${S3_BUCKET}.s3.amazonaws.com/sbcl-1.0.54-x86-64-linux-binary.tar.bz2"
+    DECOMPRESS="tar xjf - -C $CL_DIR"
+    ;;
+  ccl)
+    S3_BUCKET="cl-heroku"
+    CL_PACKAGE="http://${S3_BUCKET}.s3.amazonaws.com/ccl-1.7.tgz"
+    DECOMPRESS="tar xzf - -C $CL_DIR"
+    ;;
+  *)
+    echo "-----> Please set CL_IMPL: heroku config:add CL_IMPL={sbcl|ccl}."
+    exit 1
+esac
+
+echo "-----> Installing $CL_IMPL"
 if [ ! -d $CL_DIR ]; then
-    echo "-----> Fetching sbcl"
-    mkdir -p $CL_DIR  && curl $CL_PACKAGE -s -o -  | tar xvjf - -C $CL_DIR
+    echo "-----> Fetching $CL_IMPL"
+    mkdir -p $CL_DIR  && curl $CL_PACKAGE -s -o -  | $DECOMPRESS
 fi
 
 # add to slug 
 cp -r $CL_DIR $BUILD_DIR
 
-echo "sbcl installed" | indent
-
-# setting up paths for building
+echo "$CL_IMPL installed" | indent
 
 export BUILDPACK_DIR
 export CACHE_DIR
@@ -47,7 +58,10 @@ export CL_DEFAULT_DIRECTORY=$CL_DIR
 export LANG=en_US.UTF-8
 
 echo "-----> Starting build"
-sh $CL_DEFAULT_DIRECTORY/sbcl-1.0.54-x86-64-linux/run-sbcl.sh --load "$BUILDPACK_DIR/setup/compile.lisp"
+case $CL_IMPL in
+  sbcl) sh $CL_DEFAULT_DIRECTORY/sbcl-1.0.54-x86-64-linux/run-sbcl.sh --load "$BUILDPACK_DIR/setup/compile.lisp";;
+  ccl) $CCL_DEFAULT_DIRECTORY/scripts/ccl64 -l "$BUILDPACK_DIR/setup/compile.lisp";;
+esac
 echo "-----> Build finished"
 
 chmod a+x $BUILD_DIR/lispapp
