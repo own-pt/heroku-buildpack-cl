@@ -40,7 +40,8 @@
 (defun heroku-toplevel ()
   (let ((port (parse-integer (hgetenv "PORT"))))
     (format t "Listening on port ~A~%" port)
-    (hunchentoot:start (make-instance 'hunchentoot:easy-acceptor :port port))))
+    (hunchentoot:start (make-instance 'hunchentoot:easy-acceptor :port port))
+    (loop (sleep 60))))
 ;;; Default toplevel, app can redefine if necessary
 ;(defun heroku-toplevel ()
 ;  (let ((port (parse-integer (hgetenv "PORT"))))
