@@ -56,6 +56,7 @@ export CACHE_DIR
 export BUILD_DIR
 export CL_DEFAULT_DIRECTORY=$CL_DIR
 export LANG=en_US.UTF-8
+export CL_IMPL
 
 echo "-----> Starting build"
 case $CL_IMPL in
