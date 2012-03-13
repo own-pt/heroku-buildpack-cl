@@ -1,5 +1,7 @@
 (in-package :cl-user)
 
+#+sbcl (require :sb-posix)
+
 (defun hgetenv (target)
   #+ccl (getenv target)
   #+sbcl (sb-posix:getenv target))
