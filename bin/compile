@@ -25,6 +25,8 @@ CACHE_DIR=$2
 CL_DIR="$CACHE_DIR/$CL_IMPL"
 echo "-----> compile params: $BUILD_DIR $CACHE_DIR"
 
+echo "-----> Installing $CL_IMPL"
+
 # 
 case $CL_IMPL in
   sbcl)
@@ -42,7 +44,6 @@ case $CL_IMPL in
     exit 1
 esac
 
-echo "-----> Installing $CL_IMPL"
 if [ ! -d $CL_DIR ]; then
     echo "-----> Fetching $CL_IMPL"
     mkdir -p $CL_DIR  && curl $CL_PACKAGE -s -o -  | $DECOMPRESS
