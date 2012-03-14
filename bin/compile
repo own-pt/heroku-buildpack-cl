@@ -15,8 +15,6 @@ function indent() {
   esac
 }
 
-export CL_IMPL
-
 # parse and derive params
 BUILDPACK_DIR=$(cd $(dirname $0); cd ..; pwd) # absolute path of buildpack
 BUILD_DIR=$1
