@@ -7,14 +7,15 @@ Original work by Mike Travers, mt@hyperphor.com
 
 ## Changes 
 * Support for SBCL and Hunchentoot.
+
 > Example app at https://github.com/jsmpereira/heroku-cl-example
 
 * Implementation choice via env variables.
 
->> You need this first: http://devcenter.heroku.com/articles/labs-user-env-compile.
+> You need this first: http://devcenter.heroku.com/articles/labs-user-env-compile.
 It will allow the config vars to be present at build time.
 
->> Then you can do 
+> Then you can do 
 ```heroku config:add CL_IMPL={sbcl|cc}```
 
 ### Notes
