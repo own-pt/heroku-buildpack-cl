@@ -18,16 +18,18 @@ It will allow the config vars to be present at build time.
 > Then you can do 
 ```heroku config:add CL_IMPL={sbcl|ccl}```
 
+* Web server choice
+```heroku config:add CL_WEBSERVER={hunchentoot|aserve}```
+
 ### Notes
 
 * To avoid trouble with SBCL source encoding use:
 ```heroku config:add LANG=en_US.UTF-8```
 
-* Both SBCL and CCL with Hunchentoot work right now, but I'm working
-on adding back AllegroServe support from Mike Travers's original fork.
-
-* I plan on using the same method for specifying web server. Something like:
-```heroku config:add CL_WEBSERVER={hunchentoot|portableaserve}```
+* Hunchentoot working with SBCL and CCL. AllegroServe working with CCL.
+There's however an issue with AllegroServe in SBCL. acl-compat bundled in 
+https://github.com/mtravers/portableaserve seems to be using some
+SBCL deprecated sb-thread functions.
 
 José Santos, jsmpereira@gmail.com
 
