@@ -30,7 +30,7 @@
 (ql:quickload "hunchentoot")
 
 (defun heroku-toplevel ()
-  (let ((port (parse-integer (hgetenv "PORT"))))
+  (let ((port (parse-integer (heroku-getenv "PORT"))))
     (format t "Listening on port ~A~%" port)
     (hunchentoot:start (make-instance 'hunchentoot:easy-acceptor :port port))
     (loop (sleep 60))))
@@ -46,6 +46,6 @@
         :toplevel #'heroku-toplevel
         :executable t))
 
-(let ((app-file (format nil "~A/lispapp" (hgetenv "BUILD_DIR")))) ;must match path specified in bin/release
+(let ((app-file (format nil "~A/lispapp" (heroku-getenv "BUILD_DIR")))) ;must match path specified in bin/release
   (format t "Saving to ~A~%" app-file)
   (h-save-app app-file))
