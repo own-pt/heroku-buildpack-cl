@@ -6,8 +6,8 @@ rm -rf /tmp/build
 git clone -l . /tmp/build
 
 # comment out this section to reuse the cache
-rm -rf /tmp/cache
-mkdir /tmp/cache
+#$rm -rf /tmp/cache
+#mkdir /tmp/cache
 #ln -s /misc/repos/sbcl /tmp/cache/sbcl
 
 cd /tmp/build

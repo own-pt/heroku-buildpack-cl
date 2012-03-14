@@ -36,6 +36,7 @@ case $CL_IMPL in
     S3_BUCKET="cl-heroku"
     CL_PACKAGE="http://${S3_BUCKET}.s3.amazonaws.com/ccl-1.7.tgz"
     DECOMPRESS="tar xzf - -C $CL_DIR"
+    export CCL_DEFAULT_DIRECTORY=$CL_DIR # overwrite CCL_DEFAULT_DIRECTORY on ccl64
     ;;
   *)
     echo "-----> Please set CL_IMPL: heroku config:add CL_IMPL={sbcl|ccl}."
@@ -55,12 +56,11 @@ echo "$CL_IMPL installed" | indent
 export BUILDPACK_DIR
 export CACHE_DIR
 export BUILD_DIR
-export CL_DEFAULT_DIRECTORY=$CL_DIR
 
 echo "-----> Starting build"
 case $CL_IMPL in
-  sbcl) sh $CL_DEFAULT_DIRECTORY/sbcl-1.0.54-x86-64-linux/run-sbcl.sh --load "$BUILDPACK_DIR/setup/compile.lisp";;
-  ccl) $CL_DEFAULT_DIRECTORY/scripts/ccl64 -l "$BUILDPACK_DIR/setup/compile.lisp";;
+  sbcl) sh $CL_DIR/sbcl-1.0.54-x86-64-linux/run-sbcl.sh --load "$BUILDPACK_DIR/setup/compile.lisp";;
+  ccl) $CCL_DEFAULT_DIRECTORY/scripts/ccl64 -l "$BUILDPACK_DIR/setup/compile.lisp";;
 esac
 echo "-----> Build finished"
 
