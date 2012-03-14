@@ -28,9 +28,9 @@
 	(funcall (symbol-function (find-symbol "INSTALL" (find-package "QUICKLISP-QUICKSTART")))
 		 :path (make-pathname :directory (pathname-directory ql-setup))))))
 
-(case *cl-webserver*
-  (HUNCHENTOOT (ql:quickload "hunchentoot"))
-  (ASERVE (progn
+(ecase *cl-webserver*
+  (hunchentoot (ql:quickload "hunchentoot"))
+  (aserve (progn
             (asdf:clear-system "acl-compat")
             ;;; Load all .asd files in the repos subdirectory.  The compile script puts
             ;;; several systems in there, because we are using versions that are 
@@ -42,9 +42,10 @@
 (defun heroku-toplevel ()
   (let ((port (parse-integer (heroku-getenv "PORT"))))
     (format t "Listening on port ~A~%" port)
-    (case *cl-webserver*
-      (HUNCHENTOOT (hunchentoot:start (make-instance 'hunchentoot:easy-acceptor :port port)))
-      (ASERVE (funcall (symbol-function (find-symbol "START" (find-package "NET.ASERVE"))) :port port)))    
+    (ecase *cl-webserver*
+      (hunchentoot (funcall (symbol-function (find-symbol "START" (find-package "HUNCHENTOOT")))
+		     (funcall 'make-instance (find-symbol "EASY-ACCEPTOR" (find-package "HUNCHENTOOT")) :port port)))
+      (aserve (funcall (symbol-function (find-symbol "START" (find-package "NET.ASERVE"))) :port port)))
     (loop (sleep 60))))
 
 ;;; This loads the application
