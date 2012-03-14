@@ -13,6 +13,7 @@
 (defvar *build-dir* (pathname-directory (pathname (concatenate 'string (heroku-getenv "BUILD_DIR") "/"))))
 (defvar *cache-dir* (pathname-directory (pathname (concatenate 'string (heroku-getenv "CACHE_DIR") "/"))))
 (defvar *buildpack-dir* (pathname-directory (pathname (concatenate 'string (heroku-getenv "BUILDPACK_DIR") "/"))))
+(defvar *cl-webserver* (read-from-string (heroku-getenv "CL_WEBSERVER")))
 
 ;;; Tell ASDF to store binaries in the cache dir
 (heroku-setenv)
@@ -27,12 +28,23 @@
 	(funcall (symbol-function (find-symbol "INSTALL" (find-package "QUICKLISP-QUICKSTART")))
 		 :path (make-pathname :directory (pathname-directory ql-setup))))))
 
-(ql:quickload "hunchentoot")
+(case *cl-webserver*
+  (HUNCHENTOOT (ql:quickload "hunchentoot"))
+  (ASERVE (progn
+            (asdf:clear-system "acl-compat")
+            ;;; Load all .asd files in the repos subdirectory.  The compile script puts
+            ;;; several systems in there, because we are using versions that are 
+            ;;; different from those in Quicklisp. 
+            (mapc #'load (directory (make-pathname :directory (append *cache-dir* '("repos" :wild-inferiors))
+                           :name :wild
+                           :type "asd"))))))
 
 (defun heroku-toplevel ()
   (let ((port (parse-integer (heroku-getenv "PORT"))))
     (format t "Listening on port ~A~%" port)
-    (hunchentoot:start (make-instance 'hunchentoot:easy-acceptor :port port))
+    (case *cl-webserver*
+      (HUNCHENTOOT (hunchentoot:start (make-instance 'hunchentoot:easy-acceptor :port port)))
+      (ASERVE (funcall (symbol-function (find-symbol "START" (find-package "NET.ASERVE"))) :port port)))    
     (loop (sleep 60))))
 
 ;;; This loads the application
