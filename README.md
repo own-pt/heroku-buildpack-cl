@@ -16,10 +16,14 @@ Original work by Mike Travers, mt@hyperphor.com
 It will allow the config vars to be present at build time.
 
 > Then you can do 
-```heroku config:add CL_IMPL={sbcl|ccl}```
+```heroku config:add CL_IMPL=sbcl```
+or
+```heroku config:add CL_IMPL=ccl```
 
 * Web server choice
-```heroku config:add CL_WEBSERVER={hunchentoot|aserve}```
+```heroku config:add CL_WEBSERVER=hunchentoot```
+or
+```heroku config:add CL_WEBSERVER=aserve```
 
 ### Notes
 
