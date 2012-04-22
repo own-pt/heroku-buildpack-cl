@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# This is a script to simulate heroku's compile process locally, as much as possible
+# You'll have to customize it for your own machine (eg with ptrs to CCL and the Buildback)
+# See also bin/test-run
+
 # run in app repository directory (eg ~/repos/heroku-cl-example/)
 
 rm -rf /tmp/build

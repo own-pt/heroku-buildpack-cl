@@ -32,13 +32,23 @@
   (hunchentoot (ql:quickload "hunchentoot"))
   (aserve (progn
             (asdf:clear-system "acl-compat")
-            ;;; Load all .asd files in the repos subdirectory.  The compile script puts
-            ;;; several systems in there, because we are using versions that are 
-            ;;; different from those in Quicklisp. 
-            (mapc #'load (directory (make-pathname :directory (append *cache-dir* '("repos" :wild-inferiors))
-                           :name :wild
-                           :type "asd"))))))
+	    ;;; Load all .asd files in the repos subdirectory.  The compile script puts
+	    ;;; several systems in there, because we are using versions that are
+	    ;;; different from those in Quicklisp. (update: Can't just load the files apparently,
+	    ;;; have to add dirs to asdf:*central-registry*.  Blah.
+	    (let* ((asds (directory (make-pathname :directory  (append *cache-dir* '( "repos" :wild-inferiors))
+						   :name :wild
+						   :type "asd")))
+		   (directories (remove-duplicates (mapcar #'pathname-directory asds) :test #'equal)))
+	      (dolist (d directories)
+		(push (make-pathname :directory d) asdf:*central-registry*))))))
+  (dolist (d directories)
+    (push (make-pathname :directory d) asdf:*central-registry*)))
 
+;;; App can redefine this to do runtime initializations
+(defun initialize-application ())
+
+;;; Default toplevel, app can redefine.
 (defun heroku-toplevel ()
   (let ((port (parse-integer (heroku-getenv "PORT"))))
     (format t "Listening on port ~A~%" port)

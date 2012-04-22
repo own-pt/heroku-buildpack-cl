@@ -46,10 +46,13 @@ José Santos, jsmpereira@gmail.com
 
 ## Notes
 * The scripts bin/test-compile and bin/test-run simulate as far as possible the Heroku build and run environments on your local machine.
+* Heroku does not have a persistent file system.  Applications should use S3 for storage; [ZS3](http://www.xach.com/lisp/zs3) is a useful CL library for doing that.
+
 
 ## Todos
-* parameterizing/forking for other Lisp implementations and web servers.
-* support for Heroku's database infrastructure.
+* parameterizing/forking for other Lisp implementations and web servers (see Github forks)
+* support for Heroku's database infrastructure (DONE -- see the example application).
+
 
 ## Credits
 * Heroku and their new [Buildpack-capable stack](http://devcenter.heroku.com/articles/buildpacks)
