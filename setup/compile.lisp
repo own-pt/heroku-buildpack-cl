@@ -42,8 +42,6 @@
 		   (directories (remove-duplicates (mapcar #'pathname-directory asds) :test #'equal)))
 	      (dolist (d directories)
 		(push (make-pathname :directory d) asdf:*central-registry*))))))
-  (dolist (d directories)
-    (push (make-pathname :directory d) asdf:*central-registry*)))
 
 ;;; App can redefine this to do runtime initializations
 (defun initialize-application ())
