@@ -10,7 +10,7 @@
   #+ccl (ccl:setenv "XDG_CACHE_HOME" (concatenate 'string (heroku-getenv "CACHE_DIR") "/.asdf/"))
   #+sbcl (sb-posix:putenv (format nil "XDG_CACHE_HOME=~A" (concatenate 'string (heroku-getenv "CACHE_DIR") "/.asdf/"))))
 
-(defvar *build-dir* (pathname-directory (pathname (concatenate 'string (heroku-getenv "BUILD_DIR") "/"))))
+(defvar *build-dir* (make-pathname :directory (heroku-getenv "BUILD_DIR")))
 (defvar *cache-dir* (pathname-directory (pathname (concatenate 'string (heroku-getenv "CACHE_DIR") "/"))))
 (defvar *buildpack-dir* (pathname-directory (pathname (concatenate 'string (heroku-getenv "BUILDPACK_DIR") "/"))))
 (defvar *cl-webserver* (read-from-string (heroku-getenv "CL_WEBSERVER")))
@@ -57,7 +57,7 @@
     (loop (sleep 60))))
 
 ;;; This loads the application
-(load (make-pathname :directory *build-dir* :defaults "heroku-setup.lisp"))
+(load (merge-pathnames "heroku-setup.lisp" *build-dir*))
 
 (defun h-save-app (app-file)
   #+ccl (save-application app-file
