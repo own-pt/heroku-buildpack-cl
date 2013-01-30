@@ -10,7 +10,10 @@
   #+ccl (ccl:setenv "XDG_CACHE_HOME" (concatenate 'string (heroku-getenv "CACHE_DIR") "/.asdf/"))
   #+sbcl (sb-posix:putenv (format nil "XDG_CACHE_HOME=~A" (concatenate 'string (heroku-getenv "CACHE_DIR") "/.asdf/"))))
 
-(defvar *build-dir* (make-pathname :defaults (heroku-getenv "BUILD_DIR")))
+(defun env-var-to-path (var)
+  (make-pathname :defaults (format nil "~a/" (heroku-getenv var))))
+
+(defvar *build-dir* (env-var-to-path "BUILD_DIR"))
 (defvar *cache-dir* (pathname-directory (pathname (concatenate 'string (heroku-getenv "CACHE_DIR") "/"))))
 (defvar *buildpack-dir* (pathname-directory (pathname (concatenate 'string (heroku-getenv "BUILDPACK_DIR") "/"))))
 (defvar *cl-webserver* (read-from-string (heroku-getenv "CL_WEBSERVER")))
