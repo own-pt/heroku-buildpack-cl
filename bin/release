@@ -5,7 +5,7 @@
 cat << EOF
 ---
 addons:
-  - shared-database:5mb
+  - heroku-postgresql:hobby-dev
 config_vars:
   PATH: /usr/bin:/bin
   LANG: en_US.UTF-8
