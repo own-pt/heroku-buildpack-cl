@@ -19,6 +19,10 @@ function indent() {
 BUILDPACK_DIR=$(cd $(dirname $0); cd ..; pwd) # absolute path of buildpack
 BUILD_DIR=$1
 CACHE_DIR=$2
+ENV_DIR=$3
+
+export CL_IMPL=$(cat $ENV_DIR/CL_IMPL)
+export CL_WEBSERVER=$(cat $ENV_DIR/CL_WEBSERVER)
 
 CL_DIR="$CACHE_DIR/$CL_IMPL"
 echo "-----> compile params: $BUILD_DIR $CACHE_DIR"
@@ -27,6 +31,8 @@ if [ $RESET_CACHE ]; then
   echo "-----> flushing cache"
   rm -rf $CACHE_DIR/*
 fi
+
+echo "-----> CL_IMPL: $CL_IMPL"
 
 case $CL_IMPL in
   sbcl)
@@ -45,34 +51,36 @@ case $CL_IMPL in
     exit 1
 esac
 
+echo "-----> CL_WEBSERVER: $CL_WEBSERVER"
+
 case $CL_WEBSERVER in
   hunchentoot)
     ;;
   aserve)
     # setting up paths for building
     echo "-----> Getting patched versions of libraries"
-    
+
     mkdir $CACHE_DIR/repos    # should be under an if to avoid error
     pushd $CACHE_DIR/repos
-    
+
     if [ -d $CACHE_DIR/repos/portableaserve ]; then
          echo 'aserve already present'
          pushd portableaserve
          git pull origin master
          popd
-    else 
+    else
         git clone git://github.com/mtravers/portableaserve.git
     fi
-    
+
     if [ -d $CACHE_DIR/repos/wuwei ]; then
          echo 'wuwei already present'
          pushd wuwei
          git pull origin master
          popd
-    else 
+    else
         git clone git://github.com/mtravers/wuwei.git
     fi
-    
+
     popd
     ;;
   *)
@@ -86,7 +94,7 @@ if [ ! -d $CL_DIR ]; then
     mkdir -p $CL_DIR  && curl $CL_PACKAGE -s -o -  | $DECOMPRESS
 fi
 
-# add to slug 
+# add to slug
 cp -r $CL_DIR $BUILD_DIR
 
 echo "$CL_IMPL installed" | indent
@@ -103,4 +111,3 @@ esac
 echo "-----> Build finished"
 
 chmod a+x $BUILD_DIR/lispapp
-
