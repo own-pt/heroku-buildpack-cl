@@ -37,8 +37,8 @@ echo "-----> CL_IMPL: $CL_IMPL"
 case $CL_IMPL in
   sbcl)
     S3_BUCKET="sbcl-heroku"
-    CL_PACKAGE="http://${S3_BUCKET}.s3.amazonaws.com/sbcl-1.0.54-x86-64-linux-binary.tar.bz2"
-    DECOMPRESS="tar xjf - -C $CL_DIR"
+    CL_PACKAGE="https://s3.amazonaws.com/${S3_BUCKET}/sbcl-1.2.13.tar.gz"
+    DECOMPRESS="tar xvf - -C $CL_DIR"
     ;;
   ccl)
     S3_BUCKET="cl-heroku"
