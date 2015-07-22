@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# bin/compile <build-dir> <cache-dir>
+# bin/compile <build-dir> <cache-dir> <env-dir>
 
 mktmpdir() {
   dir=$(mktemp -t node-$1-XXXX)
@@ -21,11 +21,17 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
 
-export CL_IMPL=$(cat $ENV_DIR/CL_IMPL)
-export CL_WEBSERVER=$(cat $ENV_DIR/CL_WEBSERVER)
+import_env() {
+  local name=$1
+  [ -f $ENV_DIR/$name ] && export "$name=$(< $ENV_DIR/$name)"
+}
+
+import_env CL_IMPL
+import_env CL_WEBSERVER
+import_env RESET_CACHE
 
 CL_DIR="$CACHE_DIR/$CL_IMPL"
-echo "-----> compile params: $BUILD_DIR $CACHE_DIR"
+echo "-----> compile params: $BUILD_DIR $CACHE_DIR $ENV_DIR"
 
 if [ $RESET_CACHE ]; then
   echo "-----> flushing cache"
