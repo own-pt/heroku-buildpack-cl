@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# bin/compile <build-dir> <cache-dir>
+# bin/compile <build-dir> <cache-dir> <env-dir>
 
 mktmpdir() {
   dir=$(mktemp -t node-$1-XXXX)
@@ -21,11 +21,17 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
 
-export CL_IMPL=$(cat $ENV_DIR/CL_IMPL)
-export CL_WEBSERVER=$(cat $ENV_DIR/CL_WEBSERVER)
+import_env() {
+  local name=$1
+  [ -f $ENV_DIR/$name ] && export "$name=$(< $ENV_DIR/$name)"
+}
+
+import_env CL_IMPL
+import_env CL_WEBSERVER
+import_env RESET_CACHE
 
 CL_DIR="$CACHE_DIR/$CL_IMPL"
-echo "-----> compile params: $BUILD_DIR $CACHE_DIR"
+echo "-----> compile params: $BUILD_DIR $CACHE_DIR $ENV_DIR"
 
 if [ $RESET_CACHE ]; then
   echo "-----> flushing cache"
@@ -37,8 +43,8 @@ echo "-----> CL_IMPL: $CL_IMPL"
 case $CL_IMPL in
   sbcl)
     S3_BUCKET="sbcl-heroku"
-    CL_PACKAGE="http://${S3_BUCKET}.s3.amazonaws.com/sbcl-1.0.54-x86-64-linux-binary.tar.bz2"
-    DECOMPRESS="tar xjf - -C $CL_DIR"
+    CL_PACKAGE="https://s3.amazonaws.com/${S3_BUCKET}/sbcl-1.2.13-x86-64-linux-binary.tar.bz2"
+    DECOMPRESS="tar jxvf - -C $CL_DIR"
     ;;
   ccl)
     S3_BUCKET="cl-heroku"
@@ -105,7 +111,7 @@ export BUILD_DIR
 
 echo "-----> Starting build"
 case $CL_IMPL in
-  sbcl) sh $CL_DIR/sbcl-1.0.54-x86-64-linux/run-sbcl.sh --load "$BUILDPACK_DIR/setup/compile.lisp";;
+  sbcl) sh $CL_DIR/sbcl-1.2.13-x86-64-linux/run-sbcl.sh --load "$BUILDPACK_DIR/setup/compile.lisp";;
   ccl) $CCL_DEFAULT_DIRECTORY/scripts/ccl64 -l "$BUILDPACK_DIR/setup/compile.lisp";;
 esac
 echo "-----> Build finished"
