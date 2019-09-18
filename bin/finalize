@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# bin/compile <build-dir> <cache-dir> <env-dir>
+
+BUILDPACK_DIR=$(cd $(dirname $0); cd ..; pwd) # absolute path of buildpack
+BUILD_DIR=$1
+CACHE_DIR=$2
+CL_DIR="$CACHE_DIR/sbcl"
+
+export BUILDPACK_DIR
+export CACHE_DIR
+export BUILD_DIR
+
+echo "-----> Starting build"
+sh $CL_DIR/sbcl-1.2.13-x86-64-linux/run-sbcl.sh --load "$BUILDPACK_DIR/setup/compile.lisp"
+
+echo "-----> Build finished"
+
+chmod a+x $BUILD_DIR/lispapp
