@@ -113,6 +113,7 @@ if [ -a $BUILD_DIR/dependecies ] ; then
 	echo "cloning $line"
 	git clone $line
     done < "$BUILD_DIR/dependecies"
+    ls | xargs -I{} git -C {} pull
     popd
     echo "dependecies cloned" | indent
 fi
