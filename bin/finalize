@@ -105,14 +105,16 @@ sh $CL_DIR/sbcl-1.2.13-x86-64-linux/run-sbcl.sh --load "$BUILDPACK_DIR/setup/ins
 
 echo "quicklisp installed" | indent
 
-if [ -z "$SSH_PRIVATE_KEY" ]
-then
-    echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa & chmod 700 ~/.ssh & chmod 600 ~/.ssh/id_rsa
-    touch ~/.ssh/known_hosts
-    ssh-keyscan github.ibm.com >> ~/.ssh/known_hosts
-fi
-
 if [ -a $BUILD_DIR/dependecies ] ; then
+    if [ ! -z "$SSH_PRIVATE_KEY" ]
+    then
+	mkdir -p ~/.ssh/
+	echo "using SSH_PRIVATE_KEY" | indent
+	echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa & chmod 700 ~/.ssh & chmod 600 ~/.ssh/id_rsa
+	touch ~/.ssh/known_hosts
+	ssh-keyscan github.ibm.com >> ~/.ssh/known_hosts
+    fi
+
     echo "-----> Cloning dependecies"
     pushd $CACHE_DIR/quicklisp/local-projects/
 
