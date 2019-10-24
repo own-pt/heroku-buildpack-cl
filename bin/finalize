@@ -30,6 +30,7 @@ import_env CL_WEBSERVER
 import_env RESET_CACHE
 import_env SSH_PRIVATE_KEY
 import_env SBCL_BUILD_ARGS
+import_env SBCL_RELEASE_ARGS
 
 CL_DIR="$CACHE_DIR/sbcl"
 echo "-----> compile params: $BUILD_DIR $CACHE_DIR"
