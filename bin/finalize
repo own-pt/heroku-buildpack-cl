@@ -29,6 +29,7 @@ import_env SBCL_VERSION
 import_env CL_WEBSERVER
 import_env RESET_CACHE
 import_env SSH_PRIVATE_KEY
+import_env SBCL_BUILD_ARGS
 
 CL_DIR="$CACHE_DIR/sbcl"
 echo "-----> compile params: $BUILD_DIR $CACHE_DIR"
@@ -129,7 +130,7 @@ if [ -a $BUILD_DIR/dependecies ] ; then
 fi
 
 echo "-----> Starting build"
-sh $CL_DIR/sbcl-1.2.13-x86-64-linux/run-sbcl.sh --load "$BUILDPACK_DIR/setup/compile.lisp"
+sh $CL_DIR/sbcl-1.2.13-x86-64-linux/run-sbcl.sh $SBCL_BUILD_ARGS --load "$BUILDPACK_DIR/setup/compile.lisp"
 
 echo "-----> Build finished"
 
