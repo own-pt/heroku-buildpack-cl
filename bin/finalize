@@ -42,7 +42,7 @@ fi
 
 echo "-----> CL_IMPL: SBCL - $SBCL_VERSION"
 
-CL_PACKAGE="https://s3.amazonaws.com/sbcl-heroku/sbcl-1.2.13-x86-64-linux-binary.tar.bz2"
+CL_PACKAGE="http://downloads.sourceforge.net/project/sbcl/sbcl/$SBCL_VERSION/sbcl-$SBCL_VERSION-x86-64-linux-binary.tar.bz2"
 DECOMPRESS="tar jxvf - -C $CL_DIR"
 echo  $CL_PACKAGE
 echo "-----> CL_WEBSERVER: $CL_WEBSERVER"
@@ -103,7 +103,7 @@ export BUILDPACK_DIR
 export CACHE_DIR
 export BUILD_DIR
 
-sh $CL_DIR/sbcl-1.2.13-x86-64-linux/run-sbcl.sh --load "$BUILDPACK_DIR/setup/install-quicklisp.lisp"
+sh $CL_DIR/sbcl-$SBCL_VERSION-x86-64-linux/run-sbcl.sh --load "$BUILDPACK_DIR/setup/install-quicklisp.lisp"
 
 echo "quicklisp installed" | indent
 
@@ -131,7 +131,7 @@ if [ -a $BUILD_DIR/dependecies ] ; then
 fi
 
 echo "-----> Starting build"
-sh $CL_DIR/sbcl-1.2.13-x86-64-linux/run-sbcl.sh $SBCL_BUILD_ARGS --load "$BUILDPACK_DIR/setup/compile.lisp"
+sh $CL_DIR/sbcl-$SBCL_VERSION-x86-64-linux/run-sbcl.sh $SBCL_BUILD_ARGS --load "$BUILDPACK_DIR/setup/compile.lisp"
 
 echo "-----> Build finished"
 
