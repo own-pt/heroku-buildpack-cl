@@ -40,7 +40,7 @@ if [ $RESET_CACHE ]; then
   rm -rf $CACHE_DIR/*
 fi
 
-echo "-----> CL_IMPL: SBCL - $SBCL_VERSION"
+echo "-----> CL_IMPL: SBCL $SBCL_VERSION"
 
 CL_PACKAGE="http://prdownloads.sourceforge.net/sbcl/sbcl-$SBCL_VERSION-x86-64-linux-binary.tar.bz2"
 DECOMPRESS="tar jxvf - -C $CL_DIR"
@@ -85,7 +85,8 @@ esac
 echo "-----> Installing sbcl"
 if [ ! -d $CL_DIR ]; then
     echo "-----> Fetching sbcl"
-    mkdir -p $CL_DIR  && curl -L $CL_PACKAGE -s -o -  | $DECOMPRESS
+    mkdir -p $CL_DIR && curl -L $CL_PACKAGE -o - | $DECOMPRESS
+    ls -l $CL_DIR
 fi
 
 # add to slug
