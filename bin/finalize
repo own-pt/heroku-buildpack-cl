@@ -33,7 +33,7 @@ import_env SBCL_BUILD_ARGS
 import_env SBCL_RELEASE_ARGS
 
 CL_DIR="$CACHE_DIR/sbcl"
-echo "-----> compile params: $BUILD_DIR $CACHE_DIR"
+echo "-----> compile params: $BUILD_DIR $CACHE_DIR $CL_DIR"
 
 if [ $RESET_CACHE ]; then
   echo "-----> flushing cache"
@@ -42,7 +42,7 @@ fi
 
 echo "-----> CL_IMPL: SBCL - $SBCL_VERSION"
 
-CL_PACKAGE="http://downloads.sourceforge.net/project/sbcl/sbcl/$SBCL_VERSION/sbcl-$SBCL_VERSION-x86-64-linux-binary.tar.bz2"
+CL_PACKAGE="http://prdownloads.sourceforge.net/sbcl/sbcl-$SBCL_VERSION-x86-64-linux-binary.tar.bz2"
 DECOMPRESS="tar jxvf - -C $CL_DIR"
 echo  $CL_PACKAGE
 echo "-----> CL_WEBSERVER: $CL_WEBSERVER"
@@ -85,7 +85,7 @@ esac
 echo "-----> Installing sbcl"
 if [ ! -d $CL_DIR ]; then
     echo "-----> Fetching sbcl"
-    mkdir -p $CL_DIR  && curl $CL_PACKAGE -s -o -  | $DECOMPRESS
+    mkdir -p $CL_DIR  && curl -L $CL_PACKAGE -s -o -  | $DECOMPRESS
 fi
 
 # add to slug
@@ -130,7 +130,7 @@ if [ -a $BUILD_DIR/dependecies ] ; then
     echo "dependecies cloned" | indent
 fi
 
-echo "-----> Starting build"
+echo "-----> Starting build:"
 ls
 sh $CL_DIR/sbcl-$SBCL_VERSION-x86-64-linux/run-sbcl.sh $SBCL_BUILD_ARGS --load "$BUILDPACK_DIR/setup/compile.lisp"
 
