@@ -125,14 +125,14 @@ if [ -a $BUILD_DIR/dependecies ] ; then
 	echo "cloning $line"
 	git clone $line
     done < "$BUILD_DIR/dependecies"
-    ls | xargs -I{} git -C {} pull
+    ls -d */ | xargs -I{} git -C {} pull
     popd
     echo "dependecies cloned" | indent
 fi
 
 echo "-----> Starting build"
+ls
 sh $CL_DIR/sbcl-$SBCL_VERSION-x86-64-linux/run-sbcl.sh $SBCL_BUILD_ARGS --load "$BUILDPACK_DIR/setup/compile.lisp"
 
 echo "-----> Build finished"
-
 chmod a+x $BUILD_DIR/lispapp
