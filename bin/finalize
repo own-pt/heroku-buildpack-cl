@@ -83,6 +83,7 @@ case $CL_WEBSERVER in
 esac
 
 echo "-----> Installing sbcl"
+rm -rf $CL_DIR
 if [ ! -d $CL_DIR ]; then
     echo "-----> Fetching sbcl"
     mkdir -p $CL_DIR && curl -L $CL_PACKAGE -o - | $DECOMPRESS
