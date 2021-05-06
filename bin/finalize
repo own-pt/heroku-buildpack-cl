@@ -7,6 +7,7 @@ mktmpdir() {
   mkdir -p $dir
   echo $dir
 }
+
 function indent() {
   c='s/^/       /'
   case $(uname) in
@@ -14,6 +15,7 @@ function indent() {
     *)      sed -u "$c";;
   esac
 }
+
 echo $PWD
 # parse and derive params
 BUILDPACK_DIR=$(cd $(dirname $0); cd ..; pwd) # absolute path of buildpack
@@ -31,6 +33,8 @@ import_env RESET_CACHE
 import_env SSH_PRIVATE_KEY
 import_env SBCL_BUILD_ARGS
 import_env SBCL_RELEASE_ARGS
+
+apt-get install sbcl
 
 CL_DIR="$CACHE_DIR/sbcl"
 echo "-----> compile params: $BUILD_DIR $CACHE_DIR $CL_DIR"
